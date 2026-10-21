@@ -2,6 +2,8 @@
 
 **Leave something worth carrying forward.**
 
+**[Visit the live Commons Ledger](https://echosreset321.github.io/essence-core/)** · [Join the first human handoff trial](https://github.com/echosreset321/essence-core/issues/1) · [Bring a counterexample](https://github.com/echosreset321/essence-core/issues/2)
+
 A working, public contribution space for **Echo's Reset 3-2-1** and **3-2-1 I AM AI 1-2-3**. Bring an idea, an objection, a source, or a useful act. Help a correction survive its next handoff.
 
 The MVP pairs an interactive landing page with a repository-backed evidence and contribution ledger. Search records by type, state, contributor, source text, or objection. Inspect origins and uncertainty. Draft a contribution or correction in your browser, submit it as a GitHub issue for review, and export a portable handoff. Shared corrections always travel with their target records, even from a filtered export.
@@ -37,7 +39,7 @@ Open the printed localhost address. Serve `docs/` over HTTP; opening `index.html
 
 ## GitHub Pages
 
-The deployable website is the `docs/` directory, including `.nojekyll`. In repository **Settings → Pages**, select **Deploy from a branch → main → /docs** and save. That is a hosting setup instruction, not a claim that publication has already happened. The task's final handoff reports the verified publication status.
+The website is published at **https://echosreset321.github.io/essence-core/**. GitHub Pages serves `main` → `/docs`, including `.nojekyll`. The initial deployment and Check the commons workflow both succeeded on 2026-10-20; the live browser loaded all eight shared records. Future merged changes to `docs/` trigger Pages publication.
 
 ## Project origins
 

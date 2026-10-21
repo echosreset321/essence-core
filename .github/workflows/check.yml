@@ -1,0 +1,21 @@
+name: Check the commons
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: npm run validate
+      - name: Preserve existing records and corrections
+        if: github.event_name == 'pull_request'
+        env:
+          LEDGER_BASE: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/check-history.mjs

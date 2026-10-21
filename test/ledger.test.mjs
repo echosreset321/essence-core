@@ -1,0 +1,15 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {validateLedger,selectRecords,buildHandoff,issueURL} from '../docs/core.js';
+const seed = JSON.parse(await readFile(new URL('../docs/data/ledger.json',import.meta.url)));
+const fixture = () => structuredClone(seed);
+function correction(data) {const c = {id:'COR-001',recordId:'ER-003',author:'007',source:'src-007',before:'Old claim',after:'Revised claim',reason:'Contrary evidence',nextAction:'Re-run the handoff',created:'2026-10-20',status:'open'}; data.corrections.push(c); return c;}
+test('seed is internally linked and does not invent trial results', () => {assert.deepEqual(validateLedger(seed), []); assert.ok(seed.records.filter(r => r.kind === 'test').every(r => r.status === 'untested'));});
+test('a correction acknowledgment cannot mark a record corrected', () => {const d = fixture(); correction(d); d.records.find(r => r.id === 'ER-003').status = 'corrected'; assert.match(validateLedger(d).join(' '),/requires verified correction/);});
+test('verified requires implementation, sources, and independent verification', () => {const d = fixture(), c = correction(d); c.status = 'verified'; assert.ok(validateLedger(d).length >= 2); Object.assign(c,{implementation:'Changed the decision rule',implementationSource:'src-request',verification:'A different participant replayed the handoff',verificationSource:'src-copilot',verifier:'copilot'}); assert.deepEqual(validateLedger(d),[]); c.verifier = '007'; assert.match(validateLedger(d).join(' '),/independent verification/);});
+test('filtered handoff retains correction and the hidden target', () => {const d = fixture(); correction(d); const h = buildHandoff(d,['ER-001']); assert.deepEqual(h.ledger.records.map(r=>r.id),['ER-001','ER-003']); assert.equal(h.ledger.corrections.length,1); assert.deepEqual(validateLedger(h.ledger),[]);});
+test('search retrieves an objection and source text with attribution', () => {assert.ok(selectRecords(seed,{query:'gatekeepers'}).some(r=>r.id==='ER-001')); assert.ok(selectRecords(seed,{query:'copilot',kind:'test',status:'untested'}).some(r=>r.id==='ER-005')); assert.equal(selectRecords(seed,{query:'no-such-string'}).length,0);});
+test('orphaned references and duplicate IDs are rejected', () => {const d=fixture(); d.records[0].sources=['missing']; d.records[1].id=d.records[0].id; assert.match(validateLedger(d).join(' '),/duplicate ID/); assert.match(validateLedger(d).join(' '),/source reference/);});
+test('issue links preserve special characters and do not publish automatically', () => {const r={id:'test',title:'A & B #1',summary:'<script> & ?'}; const u=new URL(issueURL(r)); assert.equal(u.origin,'https://github.com'); assert.equal(u.searchParams.get('title'),'[Contribution] A & B #1'); assert.ok(u.searchParams.get('body').includes(r.summary));});
+test('long Unicode drafts have a bounded issue link with explicit backup instructions', () => {const url=issueURL({id:'test',title:'Long contribution',summary:'字'.repeat(1200)});assert.ok(url.length<7000);assert.match(new URL(url).searchParams.get('body'),/Download drafts JSON/);});

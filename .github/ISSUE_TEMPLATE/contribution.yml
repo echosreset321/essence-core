@@ -1,0 +1,42 @@
+name: Bring a contribution
+description: A concept, proposal, test plan, observation, or counterexample.
+title: "[Contribution] "
+body:
+  - type: markdown
+    attributes:
+      value: "You can disagree. Keep authorship visible. An issue is a proposal for review; it does not automatically change the ledger."
+  - type: input
+    id: origin
+    attributes:
+      label: Contributor and origin
+      description: Your handle, human or AI involvement, and whether this is firsthand or copied. Credit the original contributor.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [Concept, Proposal, Test plan, Evidence, Counterexample]
+    validations:
+      required: true
+  - type: textarea
+    id: contribution
+    attributes:
+      label: Contribution and public source
+      description: State the claim, relevant record ID, source, and what is observed versus inferred. Use only material you may share.
+    validations:
+      required: true
+  - type: textarea
+    id: challenge
+    attributes:
+      label: Strongest objection and revision condition
+      description: What would change your conclusion?
+    validations:
+      required: true
+  - type: textarea
+    id: action
+    attributes:
+      label: One next action
+      description: Who has volunteered, what will they do, and how could someone check the result?
+    validations:
+      required: true

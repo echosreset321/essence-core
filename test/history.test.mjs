@@ -1,0 +1,7 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {checkHistory} from '../docs/history.js';
+const base = {participants:[{id:'a',name:'First author'}],sources:[],records:[{id:'R',author:'a',created:'2026-10-20',sources:[],summary:'Original claim'}],corrections:[]};
+test('original claims cannot disappear or silently change',()=>{const next=structuredClone(base);next.records[0].summary='Replacement';assert.match(checkHistory(base,next).join(' '),/verified correction/);next.records=[];assert.match(checkHistory(base,next).join(' '),/Cannot remove/);});
+test('a linked verified before/after correction permits revision',()=>{const next=structuredClone(base);next.records[0].summary='Replacement';next.corrections.push({recordId:'R',status:'verified',before:'Original claim',after:'Replacement'});assert.deepEqual(checkHistory(base,next),[]);});
+test('credit, correction wording, and completed verification are retained',()=>{const old=structuredClone(base);old.corrections.push({id:'C',recordId:'R',author:'a',source:'S',before:'Old',after:'New',reason:'Reason',created:'date',status:'verified',verification:'Replay succeeded'});const next=structuredClone(old);next.participants[0].name='Someone else';next.corrections[0].after='Different';next.corrections[0].status='open';next.corrections[0].verification='';const errors=checkHistory(old,next).join(' ');assert.match(errors,/Preserve a.name/);assert.match(errors,/Preserve C.after/);assert.match(errors,/backwards/);assert.match(errors,/Preserve C.verification/);});

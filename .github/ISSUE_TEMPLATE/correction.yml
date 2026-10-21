@@ -1,0 +1,38 @@
+name: Carry a correction
+description: Keep the original, propose a change, and specify how to check it.
+title: "[Correction] "
+body:
+  - type: input
+    id: target
+    attributes:
+      label: Record ID and contributor
+      description: Which record or correction, and who is making this proposal?
+    validations:
+      required: true
+  - type: textarea
+    id: original
+    attributes:
+      label: Original wording
+    validations:
+      required: true
+  - type: textarea
+    id: replacement
+    attributes:
+      label: Proposed replacement and supporting source
+      description: Explain why the original should change. Preserve unresolved disagreement.
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Next action and implementation
+      description: Who has agreed to act? If no implementation exists, say so. An acknowledgment is not a repair.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Independent verification
+      description: What should another participant check? If it has been checked, link the result and disclose independence limits. Otherwise say not yet verified.
+    validations:
+      required: true
